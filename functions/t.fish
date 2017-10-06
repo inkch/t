@@ -17,9 +17,9 @@ function t -d "tmux attacher"
     return 0
   end
 
-  set detached_session_num ( tmux list-sessions | grep -e ']$' | wc -l )
+  set detached_sessions ( tmux list-sessions | string match -r '.*]$' )
 
-  if test $detached_session_num -eq 0
+  if test ( count detached_sessions ) -eq 0
     tmux new-session
   else
     # detached session exists
@@ -27,8 +27,7 @@ function t -d "tmux attacher"
     read -p 'echo (set_color $fish_color_comment)"Tmux: attach? y/N/num > "(set_color normal)' reply
 
     if string match -r '^[Yy]$' $reply; or test $reply = ''
-      set detached_session_ids ( tmux list-sessions | grep -e ']$' | string match -r '^[0-9]+' )
-      tmux attach -t "$detached_session_ids[1]"
+      tmux attach -t ( string match -r '^[0-9]+' $detached_sessions[1] )
       if [ $status -eq 0 ]
         echo "(tmux -V) attached session"
         return 0
