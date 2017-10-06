@@ -19,7 +19,7 @@ function t -d "tmux attacher"
 
   set detached_sessions ( tmux list-sessions | string match -r '.*]$' )
 
-  if test ( count detached_sessions ) -eq 0
+  if test ( count $detached_sessions ) -eq 0
     # detached session NOT exists
     tmux new-session
   else
