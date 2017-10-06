@@ -20,25 +20,30 @@ function t -d "tmux attacher"
   set detached_sessions ( tmux list-sessions | string match -r '.*]$' )
 
   if test ( count detached_sessions ) -eq 0
+    # detached session NOT exists
     tmux new-session
   else
     # detached session exists
-    tmux list-sessions
-    read -p 'echo (set_color $fish_color_comment)"Tmux: attach? y/N/num > "(set_color normal)' reply
+    tmux list-sessions # show list on console
+    # read param from std input
+    read -p 'echo (set_color $fish_color_comment)"Tmux: attach? (y/n/num) > "(set_color normal)' reply
 
     if string match -r '^[Yy]$' $reply; or test $reply = ''
+      # input is 'y', 'Y', or '', attach session in top of list.
       tmux attach -t ( string match -r '^[0-9]+' $detached_sessions[1] )
       if [ $status -eq 0 ]
         echo "(tmux -V) attached session"
         return 0
       end
     else if string match -r '^[0-9]+$' $reply
+      # input is a number, attach specified session.
       tmux attach -t "$reply"
       if [ $status -eq 0 ]
         echo "(tmux -V) attached session"
         return 0
       end
     else if string match -r '[Nn]$' $reply
+      # input is 'n', 'N', create new session and attach
       tmux new-session
       if [ $status -eq 0 ]
         echo "(tmux -V) create new session"
@@ -46,7 +51,7 @@ function t -d "tmux attacher"
       end
     else
       echo "Invalid input. Abort."
-      return 0
+      return 1
     end
   end
 end
