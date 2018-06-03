@@ -33,26 +33,18 @@ function t -d "tmux attacher"
   if string match -r '^[Yy]$' $reply; or test $reply = ''
     # input is 'y', 'Y', or '', attach session in top of list.
     tmux attach -t ( echo $detached_sessions[1] | awk -F':' '{ print $1 }')
-    if [ $status -eq 0 ]
-      echo "(tmux -V) attached session"
-      return 0
-    end
   else if string match -r '^[Nn]$' $reply
     # input is 'n', 'N', create new session and attach
     tmux new-session
-    if [ $status -eq 0 ]
-      echo "(tmux -V) create new session"
-      return 0
-    end
   else
     # input is a number, attach specified session.
     tmux attach -t "$reply"
-    if [ $status -eq 0 ]
-      echo "(tmux -V) attached session"
-      return 0
-    else
-      echo "Invalid input. Abort."
-      return 1
-    end
+  end
+
+  if [ $status -eq 0 ]
+    return 0
+  else
+    echo "Invalid input. Abort."
+    return 1
   end
 end
