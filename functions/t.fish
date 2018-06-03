@@ -32,7 +32,7 @@ function t -d "tmux attacher"
 
   if string match -r '^[Yy]$' $reply; or test $reply = ''
     # input is 'y', 'Y', or '', attach session in top of list.
-    tmux attach -t ( string match -r '^[0-9]+' $detached_sessions[1] )
+    tmux attach -t ( string match -r '^.*:' $detached_sessions[1] )
     if [ $status -eq 0 ]
       echo "(tmux -V) attached session"
       return 0
